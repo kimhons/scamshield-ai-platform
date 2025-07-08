@@ -17,48 +17,20 @@ import {
   Play
 } from 'lucide-react';
 import PricingSection from './PricingSection';
+import ProblemSolutionSection from './ProblemSolutionSection';
 
 const LandingPage = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [currentTestimonial, setCurrentTestimonial] = useState(0);
 
   useEffect(() => {
     setIsVisible(true);
-    const interval = setInterval(() => {
-      setCurrentTestimonial((prev) => (prev + 1) % testimonials.length);
-    }, 5000);
-    return () => clearInterval(interval);
   }, []);
 
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "Cybersecurity Director", 
-      company: "TechCorp Industries",
-      content: "ScamShield AI saved our company $2.3M by detecting a sophisticated business email compromise before any funds were transferred.",
-      rating: 5
-    },
-    {
-      name: "Detective Mike Rodriguez",
-      role: "Financial Crimes Unit",
-      company: "Metro Police Department", 
-      content: "This platform has revolutionized our fraud investigations. What used to take weeks now takes hours.",
-      rating: 5
-    },
-    {
-      name: "Jennifer Walsh",
-      role: "Risk Management VP",
-      company: "Global Financial Services",
-      content: "The Enterprise tier gives us FBI-level investigation capabilities. We've prevented over $50M in fraud losses.",
-      rating: 5
-    }
-  ];
-
   const stats = [
-    { number: "99.9%", label: "Fraud Detection Accuracy", icon: Target },
-    { number: "$500M+", label: "Fraud Prevented", icon: DollarSign },
-    { number: "2.3M+", label: "Investigations Completed", icon: Search },
-    { number: "15 sec", label: "Average Analysis Time", icon: Clock }
+    { number: "$5.8T", label: "Global Fraud Losses (2024)", icon: Target },
+    { number: "2.8B", label: "People Targeted Annually", icon: DollarSign },
+    { number: "300%", label: "AI Scam Increase", icon: Search },
+    { number: "15 min", label: "Avg Time to Lose Money", icon: Clock }
   ];
 
   const aiModels = [
@@ -128,14 +100,19 @@ const LandingPage = () => {
             </div>
             
             <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6">
-              Elite AI-Powered
+              Stop the <span className="text-red-600">$5.8 Trillion</span> Fraud Crisis
               <br />
-              <span className="text-blue-600">Fraud Investigation</span>
+              <span className="text-blue-600">Elite AI Investigation</span>
             </h1>
             
-            <p className="text-xl md:text-2xl text-gray-600 mb-8 max-w-4xl mx-auto">
+            <p className="text-xl md:text-2xl text-gray-600 mb-4 max-w-4xl mx-auto">
+              <span className="text-red-600 font-bold">2.8 billion people</span> are targeted by scams annually. 
+              Traditional security fails against AI-powered fraud.
+            </p>
+            
+            <p className="text-lg md:text-xl text-gray-600 mb-8 max-w-4xl mx-auto">
               Professional-grade fraud detection with <span className="text-blue-600 font-semibold">FBI/CIA-level capabilities</span>. 
-              Born from a real scam experience, now protecting millions worldwide.
+              Born from a real $500 scam, now protecting millions worldwide.
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
@@ -166,6 +143,9 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Problem & Solution Section */}
+      <ProblemSolutionSection />
 
       {/* AI Models Showcase */}
       <div className="py-20 bg-white">
@@ -233,48 +213,43 @@ const LandingPage = () => {
         <PricingSection />
       </div>
 
-      {/* Testimonials */}
+      {/* Technology & Security */}
       <div className="py-20 bg-white">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Trusted by <span className="text-blue-600">Security Professionals</span>
+              Built by <span className="text-blue-600">Fraud Victims</span>, For Everyone
             </h2>
             <p className="text-xl text-gray-600">
-              Real results from real customers protecting their organizations
+              Born from a real $500 scam experience, ScamShield AI combines cutting-edge technology with real-world understanding of fraud tactics.
             </p>
           </div>
 
-          <div className="relative">
-            <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
-              <div className="flex justify-center mb-4">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="h-6 w-6 text-yellow-400 fill-current" />
-                ))}
+          <div className="bg-gray-50 rounded-xl p-8 text-center border border-gray-200">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              <div>
+                <div className="bg-blue-100 rounded-lg p-3 w-fit mx-auto mb-4">
+                  <Brain className="h-8 w-8 text-blue-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">20+ AI Models</h3>
+                <p className="text-gray-600">Most comprehensive AI arsenal for fraud detection</p>
               </div>
               
-              <blockquote className="text-xl text-gray-700 mb-6 italic">
-                "{testimonials[currentTestimonial].content}"
-              </blockquote>
+              <div>
+                <div className="bg-green-100 rounded-lg p-3 w-fit mx-auto mb-4">
+                  <Zap className="h-8 w-8 text-green-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Real-Time Analysis</h3>
+                <p className="text-gray-600">Instant threat detection and correlation</p>
+              </div>
               
-              <div className="text-gray-900 font-semibold">
-                {testimonials[currentTestimonial].name}
+              <div>
+                <div className="bg-purple-100 rounded-lg p-3 w-fit mx-auto mb-4">
+                  <Shield className="h-8 w-8 text-purple-600" />
+                </div>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">Enterprise Security</h3>
+                <p className="text-gray-600">Bank-grade security and compliance</p>
               </div>
-              <div className="text-gray-600">
-                {testimonials[currentTestimonial].role}, {testimonials[currentTestimonial].company}
-              </div>
-            </div>
-
-            <div className="flex justify-center mt-6 space-x-2">
-              {testimonials.map((_, index) => (
-                <button
-                  key={index}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentTestimonial ? 'bg-blue-600' : 'bg-gray-300'
-                  }`}
-                  onClick={() => setCurrentTestimonial(index)}
-                />
-              ))}
             </div>
           </div>
         </div>
