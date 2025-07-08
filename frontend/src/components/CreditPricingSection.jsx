@@ -10,7 +10,6 @@ const CreditPricingSection = () => {
       badge: "Beta",
       price: isAnnual ? 0 : 0,
       credits: "100 credits",
-      creditValue: "Free",
       description: "Basic fraud detection",
       buttonText: "Current plan",
       buttonStyle: "bg-gray-400 text-white cursor-not-allowed",
@@ -21,7 +20,9 @@ const CreditPricingSection = () => {
         "Community database access", 
         "Email support",
         "1 concurrent investigation",
-        "Basic text reports"
+        "Basic text reports",
+        "URL analysis",
+        "Simple risk scoring"
       ]
     },
     {
@@ -29,19 +30,20 @@ const CreditPricingSection = () => {
       badge: "Beta", 
       price: isAnnual ? 199.90 : 19.99,
       credits: "1,900 credits",
-      creditValue: "$0.0105 per credit",
       description: "Advanced AI analysis",
       buttonText: "Upgrade to Basic",
       buttonStyle: "bg-black text-white hover:bg-gray-800",
       popular: false,
       features: [
         "1,900 credits per month",
-        "Multi-modal analysis",
-        "Advanced AI models (Tier 2)",
-        "Priority email support",
+        "Multi-modal analysis (URLs, emails, images)",
+        "Advanced AI models (GPT-4o-mini, Claude Haiku)",
+        "Priority email support (24-48h response)",
         "2 concurrent investigations", 
         "Standard reports with visualizations",
-        "20% credit rollover"
+        "20% credit rollover",
+        "Mobile app access",
+        "Basic behavioral analysis"
       ]
     },
     {
@@ -49,21 +51,23 @@ const CreditPricingSection = () => {
       badge: "Beta",
       price: isAnnual ? 899.90 : 89.99,
       credits: "9,500 credits", 
-      creditValue: "$0.0095 per credit",
       description: "Elite AI ensemble + behavioral profiling",
       buttonText: "Upgrade to Plus",
       buttonStyle: "bg-black text-white hover:bg-gray-800",
       popular: true,
       features: [
         "9,500 credits per month",
-        "Behavioral profiling",
-        "Intelligence fusion",
-        "API access",
+        "Advanced behavioral profiling",
+        "Intelligence fusion & threat correlation",
+        "API access for integrations",
         "5 concurrent investigations",
         "Advanced reports with interactive visualizations",
         "Priority processing (1.5x speed)",
         "Phone support",
-        "Custom alerts"
+        "Custom alerts & notifications",
+        "Document forensic analysis",
+        "Social media investigation",
+        "Cryptocurrency address analysis"
       ]
     },
     {
@@ -71,22 +75,26 @@ const CreditPricingSection = () => {
       badge: "Beta",
       price: isAnnual ? 3999.90 : 399.99,
       credits: "45,000 credits",
-      creditValue: "$0.0089 per credit", 
       description: "Maximum AI capabilities + threat attribution",
       buttonText: "Upgrade to Pro",
       buttonStyle: "bg-black text-white hover:bg-gray-800",
       popular: false,
       features: [
         "45,000 credits per month",
+        "Elite AI ensemble (20+ models)",
         "Threat attribution analysis",
-        "Predictive modeling",
-        "White-label reports",
+        "Predictive modeling & forecasting",
+        "White-label reports with custom branding",
         "10 concurrent investigations",
         "Executive reports with strategic intelligence",
         "Emergency processing (2x speed)",
         "Dedicated support manager",
-        "SLA guarantees",
-        "Custom integrations"
+        "SLA guarantees (99.9% uptime)",
+        "Custom integrations (SIEM, security tools)",
+        "Advanced network analysis",
+        "Threat actor profiling",
+        "Campaign attribution",
+        "Real-time threat intelligence feeds"
       ]
     }
   ];
@@ -189,11 +197,8 @@ const CreditPricingSection = () => {
                 </div>
 
                 <div className="mb-6">
-                  <div className="text-lg font-semibold text-blue-600 mb-1">
+                  <div className="text-lg font-semibold text-blue-600">
                     {plan.credits}
-                  </div>
-                  <div className="text-sm text-gray-500">
-                    {plan.creditValue}
                   </div>
                 </div>
 
