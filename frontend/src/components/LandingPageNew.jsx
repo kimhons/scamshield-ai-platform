@@ -1,23 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { 
-  Shield, 
-  Zap, 
-  Brain, 
-  CheckCircle, 
-  Star, 
-  ArrowRight, 
-  Users, 
-  Globe, 
-  Sparkles,
-  Target,
-  Layers,
-  Search,
-  DollarSign,
-  Clock,
-  Play
-} from 'lucide-react';
-import PricingSection from './PricingSection';
+import { Shield, Zap, Brain, Users, CheckCircle, ArrowRight, Star, Globe, TrendingUp, AlertTriangle, Eye, Target, Cpu, Database, Lock } from 'lucide-react';
 import ProblemSolutionSection from './ProblemSolutionSection';
+import CreditPricingSection from './CreditPricingSection';
 
 const LandingPage = () => {
   const [isVisible, setIsVisible] = useState(false);
@@ -209,9 +193,7 @@ const LandingPage = () => {
       </div>
 
       {/* Pricing Section */}
-      <div id="pricing">
-        <PricingSection />
-      </div>
+      <CreditPricingSection />
 
       {/* Technology & Security */}
       <div className="py-20 bg-white">
