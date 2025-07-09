@@ -1,0 +1,127 @@
+"""
+ScamShield AI - User Models
+
+Database models for user management and authentication.
+"""
+
+from datetime import datetime, timezone
+from typing import Dict, Any, Optional
+import uuid
+
+from flask_sqlalchemy import SQLAlchemy
+from werkzeug.security import generate_password_hash, check_password_hash
+
+db = SQLAlchemy()
+
+class User(db.Model):
+    """User model for ScamShield AI platform"""
+    
+    __tablename__ = 'users'
+    
+    # Primary key
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    
+    # User identification
+    username = db.Column(db.String(80), unique=True, nullable=False, index=True)
+    email = db.Column(db.String(120), unique=True, nullable=False, index=True)
+    password_hash = db.Column(db.String(255), nullable=False)
+    
+    # User profile
+    first_name = db.Column(db.String(50), nullable=True)
+    last_name = db.Column(db.String(50), nullable=True)
+    company = db.Column(db.String(100), nullable=True)
+    phone = db.Column(db.String(20), nullable=True)
+    
+    # Account status
+    is_active = db.Column(db.Boolean, default=True, nullable=False)
+    is_verified = db.Column(db.Boolean, default=False, nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    
+    # Timestamps
+    created_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), nullable=False)
+    updated_at = db.Column(db.DateTime(timezone=True), default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), nullable=False)
+    last_login_at = db.Column(db.DateTime(timezone=True), nullable=True)
+    
+    # Security
+    failed_login_attempts = db.Column(db.Integer, default=0, nullable=False)
+    locked_until = db.Column(db.DateTime(timezone=True), nullable=True)
+    password_reset_token = db.Column(db.String(255), nullable=True)
+    email_verification_token = db.Column(db.String(255), nullable=True)
+    
+    # Relationships
+    investigations = db.relationship('Investigation', back_populates='user', cascade='all, delete-orphan')
+    subscriptions = db.relationship('Subscription', back_populates='user', cascade='all, delete-orphan')
+    credit_transactions = db.relationship('CreditTransaction', back_populates='user', cascade='all, delete-orphan')
+    
+    def __init__(self, username: str, email: str, password: str = None, **kwargs):
+        """Initialize user with required fields"""
+        self.username = username
+        self.email = email.lower()
+        if password:
+            self.set_password(password)
+        
+        # Set optional fields
+        for key, value in kwargs.items():
+            if hasattr(self, key):
+                setattr(self, key, value)
+    
+    def set_password(self, password: str) -> None:
+        """Set user password with proper hashing"""
+        if not password:
+            raise ValueError("Password cannot be empty")
+        self.password_hash = generate_password_hash(password)
+    
+    def check_password(self, password: str) -> bool:
+        """Check if provided password matches user's password"""
+        if not password or not self.password_hash:
+            return False
+        return check_password_hash(self.password_hash, password)
+    
+    def update_last_login(self) -> None:
+        """Update last login timestamp"""
+        self.last_login_at = datetime.now(timezone.utc)
+        self.failed_login_attempts = 0
+        self.locked_until = None
+    
+    def increment_failed_login(self) -> None:
+        """Increment failed login attempts and lock account if necessary"""
+        self.failed_login_attempts += 1
+        if self.failed_login_attempts >= 5:
+            # Lock account for 30 minutes after 5 failed attempts
+            self.locked_until = datetime.now(timezone.utc) + timedelta(minutes=30)
+    
+    def is_account_locked(self) -> bool:
+        """Check if account is currently locked"""
+        if not self.locked_until:
+            return False
+        return datetime.now(timezone.utc) < self.locked_until
+    
+    def to_dict(self, include_sensitive: bool = False) -> Dict[str, Any]:
+        """Convert user to dictionary representation"""
+        data = {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'company': self.company,
+            'phone': self.phone,
+            'is_active': self.is_active,
+            'is_verified': self.is_verified,
+            'is_admin': self.is_admin,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+            'last_login_at': self.last_login_at.isoformat() if self.last_login_at else None,
+        }
+        
+        if include_sensitive:
+            data.update({
+                'failed_login_attempts': self.failed_login_attempts,
+                'locked_until': self.locked_until.isoformat() if self.locked_until else None,
+                'is_account_locked': self.is_account_locked()
+            })
+        
+        return data
+    
+    def __repr__(self) -> str:
+        return f'<User {self.username}>'
