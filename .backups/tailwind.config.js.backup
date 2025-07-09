@@ -261,20 +261,84 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        mono: ['JetBrains Mono', 'Monaco', 'Consolas', 'monospace']
+        sans: ['Inter', 'system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'sans-serif'],
+        mono: ['JetBrains Mono', 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', 'monospace'],
+        tech: ['Orbitron', 'monospace'],
+        display: ['Inter', 'system-ui', 'sans-serif'],
+      },
+      fontSize: {
+        '2xs': ['0.625rem', { lineHeight: '0.75rem' }],
+        'xs': ['0.75rem', { lineHeight: '1rem' }],
+        'sm': ['0.875rem', { lineHeight: '1.25rem' }],
+        'base': ['1rem', { lineHeight: '1.5rem' }],
+        'lg': ['1.125rem', { lineHeight: '1.75rem' }],
+        'xl': ['1.25rem', { lineHeight: '1.75rem' }],
+        '2xl': ['1.5rem', { lineHeight: '2rem' }],
+        '3xl': ['1.875rem', { lineHeight: '2.25rem' }],
+        '4xl': ['2.25rem', { lineHeight: '2.5rem' }],
+        '5xl': ['3rem', { lineHeight: '1.2' }],
+        '6xl': ['3.75rem', { lineHeight: '1.1' }],
+        '7xl': ['4.5rem', { lineHeight: '1.1' }],
+        '8xl': ['6rem', { lineHeight: '1' }],
+        '9xl': ['8rem', { lineHeight: '1' }],
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+        '128': '32rem',
+        '144': '36rem',
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-premium': 'linear-gradient(135deg, #f97316 0%, #ef4444 50%, #ec4899 100%)',
+        'gradient-cyber': 'linear-gradient(135deg, #3b82f6 0%, #8b5cf6 50%, #06b6d4 100%)',
+        'gradient-glass': 'linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%)',
+        'noise': "url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuOSIgbnVtT2N0YXZlcz0iNCIgc3RpdGNoVGlsZXM9InN0aXRjaCIvPjwvZmlsdGVyPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIwLjEiLz48L3N2Zz4=')",
       },
       backdropBlur: {
         xs: '2px',
+        '4xl': '72px',
+      },
+      backdropBrightness: {
+        25: '.25',
+        175: '1.75',
       },
       boxShadow: {
-        'glow': '0 0 20px rgba(249, 115, 22, 0.3)',
-        'glow-lg': '0 0 30px rgba(249, 115, 22, 0.4)',
+        // Premium Shadows
+        'premium': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+        'premium-lg': '0 35px 60px -12px rgba(0, 0, 0, 0.35)',
+        
+        // Glow Effects
+        'glow': '0 0 20px rgba(249, 115, 22, 0.4)',
+        'glow-sm': '0 0 10px rgba(249, 115, 22, 0.3)',
+        'glow-md': '0 0 20px rgba(249, 115, 22, 0.4)',
+        'glow-lg': '0 0 30px rgba(249, 115, 22, 0.5)',
+        'glow-xl': '0 0 40px rgba(249, 115, 22, 0.6)',
+        
+        // Accent Glows
+        'glow-accent': '0 0 20px rgba(59, 130, 246, 0.4)',
+        'glow-accent-lg': '0 0 30px rgba(59, 130, 246, 0.5)',
+        
+        // Inner Effects
         'inner-glow': 'inset 0 0 20px rgba(249, 115, 22, 0.1)',
+        'inner-glow-accent': 'inset 0 0 20px rgba(59, 130, 246, 0.1)',
+        
+        // Colored Shadows
+        'shadow-orange': '0 10px 25px -3px rgba(249, 115, 22, 0.3)',
+        'shadow-blue': '0 10px 25px -3px rgba(59, 130, 246, 0.3)',
+        'shadow-purple': '0 10px 25px -3px rgba(139, 92, 246, 0.3)',
+        
+        // Glass Morphism
+        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.37)',
+        'glass-lg': '0 15px 35px 0 rgba(31, 38, 135, 0.2)',
+      },
+      dropShadow: {
+        'glow': '0 0 20px rgba(249, 115, 22, 0.4)',
+        'glow-accent': '0 0 20px rgba(59, 130, 246, 0.4)',
+      },
+      blur: {
+        '4xl': '72px',
       }
     }
   },

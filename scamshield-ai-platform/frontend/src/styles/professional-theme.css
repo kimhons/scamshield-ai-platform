@@ -1,0 +1,334 @@
+/* ScamShield AI - Professional Enterprise Design System */
+
+/* Import Professional Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+/* Professional Enterprise Color Palette */
+:root {
+  /* Primary Enterprise Colors */
+  --navy-primary: #1a1f36;
+  --navy-secondary: #232a47;
+  --navy-tertiary: #2d3656;
+  
+  /* Professional Grays */
+  --gray-50: #f8fafc;
+  --gray-100: #f1f5f9;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-400: #94a3b8;
+  --gray-500: #64748b;
+  --gray-600: #475569;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  
+  /* Professional Accent Colors */
+  --blue-primary: #0066cc;
+  --blue-secondary: #0052a3;
+  --blue-light: #1a7adc;
+  
+  /* Alert Colors (Professional) */
+  --orange-alert: #ff6b35;
+  --orange-alert-light: #ff8458;
+  --orange-alert-dark: #e65528;
+  
+  /* Status Colors */
+  --green-success: #059669;
+  --yellow-warning: #d97706;
+  --red-danger: #dc2626;
+  
+  /* Professional Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  /* Professional Spacing */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-20: 5rem;
+  --space-24: 6rem;
+  
+  /* Professional Border Radius */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+  
+  /* Professional Typography */
+  --font-size-xs: 0.75rem;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.25rem;
+  --font-size-2xl: 1.5rem;
+  --font-size-3xl: 1.875rem;
+  --font-size-4xl: 2.25rem;
+  --font-size-5xl: 3rem;
+  
+  /* Line Heights */
+  --leading-tight: 1.25;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.625;
+}
+
+/* Professional Base Styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: var(--font-size-base);
+  line-height: var(--leading-normal);
+  color: var(--gray-800);
+  background-color: var(--gray-50);
+  antialiased: true;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Professional Typography Classes */
+.text-enterprise-primary {
+  color: var(--navy-primary);
+}
+
+.text-enterprise-secondary {
+  color: var(--navy-secondary);
+}
+
+.text-professional-blue {
+  color: var(--blue-primary);
+}
+
+.text-alert-orange {
+  color: var(--orange-alert);
+}
+
+.bg-enterprise-primary {
+  background-color: var(--navy-primary);
+}
+
+.bg-enterprise-secondary {
+  background-color: var(--navy-secondary);
+}
+
+.bg-professional-blue {
+  background-color: var(--blue-primary);
+}
+
+.bg-professional-white {
+  background-color: white;
+}
+
+/* Professional Button Styles */
+.btn-enterprise-primary {
+  background-color: var(--blue-primary);
+  color: white;
+  border: none;
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-enterprise-primary:hover {
+  background-color: var(--blue-secondary);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-enterprise-secondary {
+  background-color: transparent;
+  color: var(--blue-primary);
+  border: 2px solid var(--blue-primary);
+  padding: var(--space-3) var(--space-6);
+  border-radius: var(--radius-lg);
+  font-weight: 600;
+  font-size: var(--font-size-base);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-enterprise-secondary:hover {
+  background-color: var(--blue-primary);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Professional Card Styles */
+.card-enterprise {
+  background: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--gray-200);
+  padding: var(--space-6);
+  transition: all 0.2s ease;
+}
+
+.card-enterprise:hover {
+  box-shadow: var(--shadow-xl);
+  transform: translateY(-2px);
+}
+
+.card-enterprise-dark {
+  background: var(--navy-primary);
+  color: white;
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-6);
+  transition: all 0.2s ease;
+}
+
+/* Professional Header Styles */
+.header-enterprise {
+  background: white;
+  border-bottom: 1px solid var(--gray-200);
+  box-shadow: var(--shadow-sm);
+  padding: var(--space-4) 0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+/* Professional Section Spacing */
+.section-enterprise {
+  padding: var(--space-20) 0;
+}
+
+.section-enterprise-lg {
+  padding: var(--space-24) 0;
+}
+
+/* Professional Container */
+.container-enterprise {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+}
+
+/* Professional Grid */
+.grid-enterprise {
+  display: grid;
+  gap: var(--space-8);
+}
+
+.grid-enterprise-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.grid-enterprise-3 {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.grid-enterprise-4 {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+/* Professional Status Indicators */
+.status-success {
+  background-color: #ecfdf5;
+  color: var(--green-success);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.status-warning {
+  background-color: #fffbeb;
+  color: var(--yellow-warning);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+.status-danger {
+  background-color: #fef2f2;
+  color: var(--red-danger);
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+}
+
+/* Professional Animations (Subtle) */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .grid-enterprise-2,
+  .grid-enterprise-3,
+  .grid-enterprise-4 {
+    grid-template-columns: 1fr;
+  }
+  
+  .container-enterprise {
+    padding: 0 var(--space-4);
+  }
+  
+  .section-enterprise {
+    padding: var(--space-12) 0;
+  }
+  
+  .section-enterprise-lg {
+    padding: var(--space-16) 0;
+  }
+}
+
+/* Professional Focus States */
+*:focus {
+  outline: 2px solid var(--blue-primary);
+  outline-offset: 2px;
+}
+
+*:focus:not(:focus-visible) {
+  outline: none;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--blue-primary);
+  outline-offset: 2px;
+}
