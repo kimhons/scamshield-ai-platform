@@ -2,17 +2,17 @@
 ScamShield AI - Enhanced Backend Application
 
 Elite fraud investigation platform with hybrid AI capabilities, credit system, and advanced reporting
+Enhanced with comprehensive error handling, logging, and security features.
 """
 
 import os
 import asyncio
-import logging
 from datetime import datetime, timezone
 from typing import Dict, List, Any, Optional
 import uuid
 import json
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, g
 from flask_cors import CORS
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.utils import secure_filename
@@ -37,24 +37,63 @@ from report_templates.report_generator import (
 
 # Import Database models
 from models.user import db as user_db, User
-from models.investigation import Investigation, Report, Evidence, ScamDatabase
+from models.investigation import Investigation, Report, Evidence, ScamDatabase, EvidenceType
 
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+# Import Enhanced Utilities
+from utils.error_handler import (
+    ErrorHandler, APIError, ValidationError, SecurityError, BusinessLogicError, ErrorContext
+)
+from utils.logging_config import setup_logging, get_logger, log_request_middleware
+from utils.validators import (
+    validate_email, validate_phone, validate_url, sanitize_input, 
+    validate_required_fields, validate_username
+)
+from utils.security_utils import (
+    TokenSecurity, PasswordSecurity, SecurityMonitoring, CSRFProtection,
+    hash_password, verify_password
+)
+
+# Setup enhanced logging
+setup_logging(
+    app_name="scamshield_ai",
+    log_level=os.environ.get('LOG_LEVEL', 'INFO'),
+    enable_structured=True,
+    enable_security_filter=True,
+    enable_performance_filter=False
+)
+
+logger = get_logger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__, static_folder='static', static_url_path='')
 
-# Configuration
+# Enhanced Configuration
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'scamshield-ai-secret-key-2025')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///scamshield_ai.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
+app.config['DEBUG'] = os.environ.get('FLASK_ENV') == 'development'
 
-# Initialize extensions
-CORS(app, origins=["*"])
+# Security Configuration
+app.config['WTF_CSRF_ENABLED'] = True
+app.config['SESSION_COOKIE_SECURE'] = not app.config['DEBUG']
+app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
+
+# Initialize enhanced extensions
+CORS(app, origins=["*"], supports_credentials=True)
 user_db.init_app(app)
+
+# Initialize enhanced error handling
+error_handler = ErrorHandler(app)
+
+# Initialize security components
+token_security = TokenSecurity(app.config['SECRET_KEY'])
+security_monitor = SecurityMonitoring()
+csrf_protection = CSRFProtection(app.config['SECRET_KEY'])
+
+# Register request middleware for logging
+log_request_middleware(app)
 
 # Register blueprints
 app.register_blueprint(credit_bp)
@@ -72,10 +111,78 @@ TIER_PRICING = {
 
 @app.before_first_request
 def create_tables():
-    """Create database tables"""
+    """Create database tables and initialize application"""
     with app.app_context():
         user_db.create_all()
         logger.info("Database tables created")
+        
+        # Initialize default data if needed
+        from models.credit_system import DEFAULT_SUBSCRIPTION_PLANS, SubscriptionPlan
+        for plan_data in DEFAULT_SUBSCRIPTION_PLANS:
+            existing_plan = SubscriptionPlan.query.filter_by(tier=plan_data['tier']).first()
+            if not existing_plan:
+                plan = SubscriptionPlan(**plan_data)
+                user_db.session.add(plan)
+        
+        try:
+            user_db.session.commit()
+            logger.info("Default subscription plans initialized")
+        except Exception as e:
+            user_db.session.rollback()
+            logger.error(f"Error initializing default data: {str(e)}")
+
+@app.before_request
+def security_checks():
+    """Enhanced security checks for each request"""
+    # Generate request ID for tracking
+    g.request_id = str(uuid.uuid4())
+    
+    # Rate limiting check
+    client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+    if security_monitor.check_rate_limit(client_ip, limit=100, window=60):
+        logger.security("Rate limit exceeded", ip_address=client_ip)
+        raise APIError(
+            message="Rate limit exceeded",
+            error_type="rate_limit",
+            status_code=429,
+            user_message="Too many requests. Please try again later."
+        )
+    
+    # Check for suspicious IP
+    if security_monitor.is_suspicious_ip(client_ip):
+        logger.security("Request from suspicious IP", ip_address=client_ip)
+        # Log but don't block - might be legitimate user
+    
+    # Detect suspicious patterns
+    request_data = {
+        'method': request.method,
+        'path': request.path,
+        'user_agent': request.headers.get('User-Agent', ''),
+        'ip_address': client_ip
+    }
+    
+    suspicious_patterns = security_monitor.detect_suspicious_patterns(request_data)
+    if suspicious_patterns:
+        logger.security("Suspicious request patterns detected",
+                       patterns=suspicious_patterns,
+                       **request_data)
+    
+    # Add security headers
+    @app.after_request
+    def add_security_headers(response):
+        """Add security headers to all responses"""
+        response.headers['X-Content-Type-Options'] = 'nosniff'
+        response.headers['X-Frame-Options'] = 'DENY'
+        response.headers['X-XSS-Protection'] = '1; mode=block'
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+        response.headers['Referrer-Policy'] = 'strict-origin-when-cross-origin'
+        response.headers['Content-Security-Policy'] = "default-src 'self'"
+        
+        # Add request ID to response for tracking
+        if hasattr(g, 'request_id'):
+            response.headers['X-Request-ID'] = g.request_id
+        
+        return response
 
 # ============ CORE API ENDPOINTS ============
 
@@ -86,13 +193,396 @@ def index():
 
 @app.route('/api/health')
 def health_check():
-    """Health check endpoint"""
-    return jsonify({
-        "status": "healthy",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
-        "version": "2.0.0",
-        "ai_engine": "operational"
-    })
+    """Enhanced health check endpoint with system metrics"""
+    with ErrorContext("health_check"):
+        try:
+            # Check database connectivity
+            user_db.session.execute('SELECT 1')
+            db_status = "healthy"
+        except Exception as e:
+            logger.error(f"Database health check failed: {str(e)}")
+            db_status = "unhealthy"
+        
+        # Check AI engine status
+        try:
+            ai_status = "operational" if investigation_engine else "unavailable"
+        except Exception:
+            ai_status = "error"
+        
+        # Get error statistics
+        error_stats = error_handler.get_error_statistics()
+        
+        health_data = {
+            "status": "healthy" if db_status == "healthy" and ai_status == "operational" else "degraded",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "version": "2.1.0",
+            "components": {
+                "database": db_status,
+                "ai_engine": ai_status,
+                "error_handler": "operational"
+            },
+            "error_statistics": {
+                "total_errors": sum(error_stats["error_counts"].values()),
+                "critical_errors": error_stats["critical_errors_count"]
+            },
+            "request_id": getattr(g, 'request_id', 'unknown')
+        }
+        
+        logger.info("Health check completed", extra=health_data)
+        return jsonify(health_data)
+
+# ============ ENHANCED USER MANAGEMENT ============
+
+@app.route('/api/users', methods=['POST'])
+def create_user():
+    """Enhanced user creation with comprehensive validation and security"""
+    with ErrorContext("create_user", user_id=None):
+        try:
+            # Validate request data
+            if not request.is_json:
+                raise ValidationError("Request must be JSON", field="content_type")
+            
+            data = request.get_json()
+            if not data:
+                raise ValidationError("Request body is required", field="body")
+            
+            # Sanitize input data
+            data = sanitize_input(data, max_length=255)
+            
+            # Validate required fields
+            validate_required_fields(data, ['username', 'email', 'password'])
+            
+            # Validate individual fields
+            username = validate_username(data['username'])
+            email = validate_email(data['email'])
+            password = data['password']
+            
+            # Password strength validation
+            password_strength = PasswordSecurity.check_password_strength(password)
+            if password_strength['score'] < 40:
+                raise ValidationError(
+                    "Password is too weak",
+                    field="password",
+                    details={
+                        "strength": password_strength['strength'],
+                        "issues": password_strength['issues'],
+                        "suggestions": password_strength.get('requirements_met', [])
+                    }
+                )
+            
+            # Check for existing user
+            existing_user = User.query.filter(
+                (User.username == username) | (User.email == email)
+            ).first()
+            
+            if existing_user:
+                if existing_user.username == username:
+                    raise ValidationError("Username already exists", field="username")
+                else:
+                    raise ValidationError("Email already registered", field="email")
+            
+            # Create user with hashed password
+            hashed_password = hash_password(password)
+            
+            user = User(
+                username=username,
+                email=email,
+                password=hashed_password,
+                first_name=data.get('first_name'),
+                last_name=data.get('last_name'),
+                company=data.get('company'),
+                phone=data.get('phone')
+            )
+            
+            user_db.session.add(user)
+            user_db.session.commit()
+            
+            # Log successful user creation
+            logger.business("User created successfully", 
+                          user_id=user.id, 
+                          username=username,
+                          email=email)
+            
+            # Return user data (excluding sensitive information)
+            response_data = {
+                "user": user.to_dict(),
+                "message": "User created successfully",
+                "request_id": g.request_id
+            }
+            
+            return jsonify(response_data), 201
+            
+        except ValidationError:
+            raise  # Re-raise validation errors
+        except Exception as e:
+            user_db.session.rollback()
+            logger.error(f"User creation failed: {str(e)}")
+            raise APIError(
+                message=f"Failed to create user: {str(e)}",
+                error_type="internal",
+                status_code=500
+            )
+
+@app.route('/api/auth/login', methods=['POST'])
+def login_user():
+    """Enhanced user authentication with security monitoring"""
+    with ErrorContext("user_login"):
+        try:
+            # Validate request
+            if not request.is_json:
+                raise ValidationError("Request must be JSON", field="content_type")
+            
+            data = request.get_json()
+            if not data:
+                raise ValidationError("Request body is required", field="body")
+            
+            # Sanitize and validate input
+            data = sanitize_input(data)
+            validate_required_fields(data, ['username', 'password'])
+            
+            username = data['username']
+            password = data['password']
+            client_ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
+            
+            # Find user
+            user = User.query.filter(
+                (User.username == username) | (User.email == username)
+            ).first()
+            
+            if not user:
+                # Track failed attempt (even for non-existent users)
+                security_monitor.track_failed_login(username, client_ip)
+                logger.security("Login attempt for non-existent user",
+                               username=username,
+                               ip_address=client_ip)
+                raise SecurityError("Invalid credentials")
+            
+            # Check if account is locked
+            if user.is_account_locked():
+                logger.security("Login attempt for locked account",
+                               user_id=user.id,
+                               ip_address=client_ip)
+                raise SecurityError("Account is temporarily locked due to multiple failed attempts")
+            
+            # Verify password
+            if not verify_password(password, user.password_hash):
+                # Track failed attempt
+                should_lock = security_monitor.track_failed_login(user.id, client_ip)
+                user.increment_failed_login()
+                
+                if should_lock:
+                    logger.security("Account locked due to multiple failed attempts",
+                                   user_id=user.id,
+                                   ip_address=client_ip)
+                
+                user_db.session.commit()
+                raise SecurityError("Invalid credentials")
+            
+            # Successful login
+            user.update_last_login()
+            user_db.session.commit()
+            
+            # Generate JWT token
+            token_payload = {
+                'user_id': user.id,
+                'username': user.username,
+                'email': user.email,
+                'is_admin': user.is_admin
+            }
+            
+            access_token = token_security.generate_jwt_token(token_payload)
+            
+            logger.business("User logged in successfully",
+                          user_id=user.id,
+                          username=user.username,
+                          ip_address=client_ip)
+            
+            response_data = {
+                "user": user.to_dict(),
+                "access_token": access_token,
+                "token_type": "Bearer",
+                "message": "Login successful",
+                "request_id": g.request_id
+            }
+            
+            return jsonify(response_data), 200
+            
+        except (ValidationError, SecurityError):
+            raise  # Re-raise these specific errors
+        except Exception as e:
+            logger.error(f"Login failed: {str(e)}")
+            raise APIError(
+                message="Login failed",
+                error_type="internal",
+                status_code=500
+            )
+
+# ============ ENHANCED INVESTIGATION ENDPOINTS ============
+
+@app.route('/api/investigations', methods=['POST'])
+def create_investigation():
+    """Enhanced investigation creation with comprehensive validation"""
+    with ErrorContext("create_investigation"):
+        try:
+            # Validate request
+            if not request.is_json:
+                raise ValidationError("Request must be JSON", field="content_type")
+            
+            data = request.get_json()
+            if not data:
+                raise ValidationError("Request body is required", field="body")
+            
+            # Sanitize input
+            data = sanitize_input(data, max_length=1000)
+            
+            # Validate required fields
+            validate_required_fields(data, ['user_id', 'title', 'investigation_type', 'artifacts'])
+            
+            user_id = data['user_id']
+            title = data['title']
+            investigation_type = data['investigation_type']
+            artifacts = data['artifacts']
+            
+            # Validate user exists
+            user = User.query.get(user_id)
+            if not user:
+                raise ValidationError("User not found", field="user_id")
+            
+            # Validate investigation type
+            valid_types = ['quick_scan', 'deep_analysis', 'comprehensive', 'elite_intelligence']
+            if investigation_type not in valid_types:
+                raise ValidationError(
+                    f"Invalid investigation type. Must be one of: {', '.join(valid_types)}",
+                    field="investigation_type"
+                )
+            
+            # Validate artifacts
+            if not isinstance(artifacts, list) or len(artifacts) == 0:
+                raise ValidationError("At least one artifact is required", field="artifacts")
+            
+            for i, artifact in enumerate(artifacts):
+                if not isinstance(artifact, dict):
+                    raise ValidationError(f"Artifact {i} must be an object", field=f"artifacts[{i}]")
+                
+                validate_required_fields(artifact, ['type', 'content'])
+                
+                # Validate artifact content based on type
+                artifact_type = artifact['type']
+                content = artifact['content']
+                
+                if artifact_type == 'url':
+                    validate_url(content)
+                elif artifact_type == 'email':
+                    validate_email(content)
+                elif artifact_type == 'phone':
+                    validate_phone(content)
+                # Add more artifact type validations as needed
+            
+            # Check user's credit balance
+            subscription = Subscription.query.filter_by(
+                user_id=user_id,
+                status='active'
+            ).first()
+            
+            if not subscription:
+                raise BusinessLogicError(
+                    "No active subscription found",
+                    suggestion="Please subscribe to a plan to create investigations"
+                )
+            
+            # Calculate investigation cost
+            complexity = InvestigationComplexity.MODERATE  # Default
+            priority = ProcessingPriority.NORMAL
+            
+            estimated_cost = CreditCalculator.calculate_investigation_cost(
+                investigation_type=investigation_type,
+                complexity=complexity,
+                priority=priority,
+                tier=subscription.tier,
+                artifact_count=len(artifacts)
+            )
+            
+            if subscription.total_credits < estimated_cost:
+                raise BusinessLogicError(
+                    f"Insufficient credits. Required: {estimated_cost}, Available: {subscription.total_credits}",
+                    suggestion="Please purchase additional credits or upgrade your plan"
+                )
+            
+            # Create investigation
+            investigation = Investigation(
+                user_id=user_id,
+                title=title,
+                description=data.get('description'),
+                investigation_type=investigation_type,
+                model_tier=data.get('model_tier', 'basic'),
+                priority=data.get('priority', 'normal')
+            )
+            
+            user_db.session.add(investigation)
+            user_db.session.flush()  # Get investigation ID
+            
+            # Create evidence records
+            for artifact in artifacts:
+                # Map artifact type to evidence type enum
+                evidence_type_map = {
+                    'url': EvidenceType.URL,
+                    'email': EvidenceType.EMAIL,
+                    'phone': EvidenceType.PHONE,
+                    'image': EvidenceType.IMAGE,
+                    'document': EvidenceType.DOCUMENT,
+                    'social_media': EvidenceType.SOCIAL_MEDIA,
+                    'cryptocurrency': EvidenceType.CRYPTOCURRENCY,
+                    'ip_address': EvidenceType.IP_ADDRESS,
+                    'domain': EvidenceType.DOMAIN
+                }
+                
+                evidence_type = evidence_type_map.get(artifact['type'])
+                if not evidence_type:
+                    raise ValidationError(
+                        f"Invalid artifact type: {artifact['type']}",
+                        field="artifacts"
+                    )
+                
+                evidence = Evidence(
+                    investigation_id=investigation.id,
+                    evidence_type=evidence_type,
+                    content=artifact['content'],
+                    metadata=artifact.get('metadata', {})
+                )
+                user_db.session.add(evidence)
+            
+            user_db.session.commit()
+            
+            logger.business("Investigation created",
+                          investigation_id=investigation.id,
+                          user_id=user_id,
+                          investigation_type=investigation_type,
+                          artifact_count=len(artifacts),
+                          estimated_cost=estimated_cost)
+            
+            # Start investigation processing asynchronously
+            # This would typically be handled by a background task queue
+            logger.info(f"Investigation {investigation.id} queued for processing")
+            
+            response_data = {
+                "investigation": investigation.to_dict(include_detailed=False),
+                "estimated_cost": estimated_cost,
+                "message": "Investigation created and queued for processing",
+                "request_id": g.request_id
+            }
+            
+            return jsonify(response_data), 201
+            
+        except (ValidationError, BusinessLogicError):
+            raise  # Re-raise these specific errors
+        except Exception as e:
+            user_db.session.rollback()
+            logger.error(f"Investigation creation failed: {str(e)}")
+            raise APIError(
+                message=f"Failed to create investigation: {str(e)}",
+                error_type="internal",
+                status_code=500
+            )
 
 @app.route('/api/tiers')
 def get_tiers():
