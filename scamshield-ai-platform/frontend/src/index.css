@@ -1,5 +1,5 @@
-/* Import Nexus Theme */
-@import './styles/nexus-theme.css';
+/* Import Complete Nexus Design System */
+@import './styles/nexus-complete.css';
 
 @tailwind base;
 @tailwind components;

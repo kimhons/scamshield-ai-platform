@@ -3,13 +3,14 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { InvestigationProvider } from './contexts/InvestigationContext'
 import NexusLandingPage from './components/nexus/NexusLandingPage'
-import { NexusLoginForm, NexusSignupForm } from './components/nexus/NexusAuth'
+import NexusAuth from './components/nexus/NexusAuth'
 import NexusDashboard from './components/nexus/NexusDashboard'
 import Investigations from './pages/Investigations'
 import InvestigationDetails from './pages/InvestigationDetails'
 import InvestigationForm from './components/investigations/InvestigationForm'
 import NexusLayout from './components/nexus/NexusLayout'
 import './index.css'
+import './styles/nexus-complete.css'
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
@@ -79,7 +80,7 @@ function App() {
                 path="/login" 
                 element={
                   <PublicRoute>
-                    <NexusLoginForm />
+                    <NexusAuth mode="login" />
                   </PublicRoute>
                 } 
               />
@@ -87,7 +88,7 @@ function App() {
                 path="/signup" 
                 element={
                   <PublicRoute>
-                    <NexusSignupForm />
+                    <NexusAuth mode="signup" />
                   </PublicRoute>
                 } 
               />

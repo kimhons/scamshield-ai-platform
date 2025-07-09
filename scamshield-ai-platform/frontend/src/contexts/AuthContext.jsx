@@ -65,10 +65,10 @@ export const AuthProvider = ({ children }) => {
       setLoading(true)
       
       // Demo authentication bypass for testing
-      if (email === 'demo@scamshield.ai' && password === 'demo123') {
+      if (email === 'demo@nexussecurity.ai' && password === 'demo123') {
         const demoUser = {
           id: 'demo-user-id',
-          email: 'demo@scamshield.ai',
+          email: 'demo@nexussecurity.ai',
           user_metadata: {
             name: 'Demo User',
             role: 'admin'
@@ -91,10 +91,10 @@ export const AuthProvider = ({ children }) => {
       return { data, error: null }
     } catch (error) {
       // If Supabase is not configured, allow demo login
-      if (email === 'demo@scamshield.ai' && password === 'demo123') {
+      if (email === 'demo@nexussecurity.ai' && password === 'demo123') {
         const demoUser = {
           id: 'demo-user-id',
-          email: 'demo@scamshield.ai',
+          email: 'demo@nexussecurity.ai',
           user_metadata: {
             name: 'Demo User',
             role: 'admin'
