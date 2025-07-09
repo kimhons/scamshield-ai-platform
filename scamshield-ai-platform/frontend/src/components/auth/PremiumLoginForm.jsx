@@ -24,7 +24,7 @@ const PremiumLoginForm = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   
-  const { login } = useAuth();
+  const { signIn } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e) => {
@@ -41,8 +41,12 @@ const PremiumLoginForm = () => {
     setError('');
 
     try {
-      await login(formData.email, formData.password);
-      navigate('/dashboard');
+      const { data, error } = await signIn(formData.email, formData.password);
+      if (error) {
+        setError(error.message || 'Failed to sign in. Please check your credentials.');
+      } else if (data) {
+        navigate('/dashboard');
+      }
     } catch (error) {
       setError(error.message || 'Failed to sign in. Please check your credentials.');
     } finally {

@@ -63,10 +63,54 @@ export const AuthProvider = ({ children }) => {
   const signIn = async (email, password) => {
     try {
       setLoading(true)
+      
+      // Demo authentication bypass for testing
+      if (email === 'demo@scamshield.ai' && password === 'demo123') {
+        const demoUser = {
+          id: 'demo-user-id',
+          email: 'demo@scamshield.ai',
+          user_metadata: {
+            name: 'Demo User',
+            role: 'admin'
+          }
+        }
+        const demoSession = {
+          user: demoUser,
+          access_token: 'demo-token',
+          expires_at: Date.now() + 24 * 60 * 60 * 1000 // 24 hours
+        }
+        
+        setUser(demoUser)
+        setSession(demoSession)
+        return { data: { session: demoSession }, error: null }
+      }
+      
+      // Regular Supabase authentication
       const { data, error } = await auth.signIn(email, password)
       if (error) throw error
       return { data, error: null }
     } catch (error) {
+      // If Supabase is not configured, allow demo login
+      if (email === 'demo@scamshield.ai' && password === 'demo123') {
+        const demoUser = {
+          id: 'demo-user-id',
+          email: 'demo@scamshield.ai',
+          user_metadata: {
+            name: 'Demo User',
+            role: 'admin'
+          }
+        }
+        const demoSession = {
+          user: demoUser,
+          access_token: 'demo-token',
+          expires_at: Date.now() + 24 * 60 * 60 * 1000
+        }
+        
+        setUser(demoUser)
+        setSession(demoSession)
+        return { data: { session: demoSession }, error: null }
+      }
+      
       return { data: null, error }
     } finally {
       setLoading(false)
