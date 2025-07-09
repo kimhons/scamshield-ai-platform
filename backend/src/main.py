@@ -1,7 +1,7 @@
 """
 ScamShield AI - Enhanced Backend Application
 
-Elite fraud investigation platform with hybrid AI capabilities
+Elite fraud investigation platform with hybrid AI capabilities, credit system, and advanced reporting
 """
 
 import os
@@ -21,6 +21,21 @@ import base64
 # Import AI Engine components
 from ai_engine.investigation_engine import InvestigationEngine, InvestigationRequest, InvestigationType
 from ai_engine.model_manager_v2 import ModelTier
+from ai_engine.prompt_engineering import prompt_engineer, AnalysisDepth
+
+# Import Credit System components
+from models.credit_system import (
+    Subscription, CreditTransaction, SubscriptionTier, CreditCalculator,
+    InvestigationComplexity, ProcessingPriority
+)
+from routes.credit_management import credit_bp
+
+# Import Report Generation components
+from report_templates.report_generator import (
+    ReportGenerator, ReportTier, ReportFormat, ReportStatus
+)
+
+# Import Database models
 from models.user import db as user_db, User
 from models.investigation import Investigation, Report, Evidence, ScamDatabase
 
@@ -35,11 +50,14 @@ app = Flask(__name__, static_folder='static', static_url_path='')
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'scamshield-ai-secret-key-2025')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///scamshield_ai.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['MAX_CONTENT_LENGTH'] = 50 * 1024 * 1024  # 50MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 100MB max file size
 
 # Initialize extensions
 CORS(app, origins=["*"])
 user_db.init_app(app)
+
+# Register blueprints
+app.register_blueprint(credit_bp)
 
 # Initialize AI Investigation Engine
 investigation_engine = InvestigationEngine()
