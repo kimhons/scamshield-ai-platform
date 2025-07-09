@@ -1,0 +1,197 @@
+/* NEXUS GUARD - Ultra-Modern Design System */
+
+:root {
+  /* Brand Colors */
+  --nexus-primary: #0070f3;
+  --nexus-secondary: #6366f1;
+  --nexus-charcoal: #18181b;
+  --nexus-white: #ffffff;
+  --nexus-gray-50: #fafafa;
+  --nexus-gray-100: #f4f4f5;
+  --nexus-gray-200: #e4e4e7;
+  --nexus-gray-300: #d4d4d8;
+  --nexus-gray-400: #a1a1aa;
+  --nexus-gray-500: #71717a;
+  --nexus-gray-600: #52525b;
+  --nexus-gray-700: #3f3f46;
+  --nexus-gray-800: #27272a;
+  --nexus-gray-900: #18181b;
+  --nexus-success: #10b981;
+  --nexus-warning: #f59e0b;
+  --nexus-error: #ef4444;
+  
+  /* Gradients */
+  --nexus-gradient-primary: linear-gradient(135deg, #0070f3 0%, #6366f1 100%);
+  
+  /* Shadows */
+  --nexus-shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --nexus-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --nexus-shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --nexus-shadow-lg: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Typography */
+  --nexus-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Modern Card Styles */
+.nexus-card {
+  background: var(--nexus-white);
+  border-radius: 1rem;
+  box-shadow: var(--nexus-shadow);
+  border: 1px solid var(--nexus-gray-200);
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nexus-card:hover {
+  box-shadow: var(--nexus-shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Modern Button Styles */
+.nexus-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-family: var(--nexus-font-sans);
+  font-weight: 500;
+  font-size: 0.875rem;
+  transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+  border: none;
+  text-decoration: none;
+  user-select: none;
+}
+
+.nexus-btn-primary {
+  background: var(--nexus-gradient-primary);
+  color: var(--nexus-white);
+  box-shadow: var(--nexus-shadow-sm);
+}
+
+.nexus-btn-primary:hover {
+  box-shadow: var(--nexus-shadow-md);
+  transform: translateY(-1px);
+}
+
+/* Glass Morphism */
+.nexus-glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Typography */
+.nexus-heading-1 {
+  font-family: var(--nexus-font-sans);
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: var(--nexus-charcoal);
+}
+
+.nexus-heading-2 {
+  font-family: var(--nexus-font-sans);
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: var(--nexus-charcoal);
+}
+
+.nexus-heading-3 {
+  font-family: var(--nexus-font-sans);
+  font-size: 1.875rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--nexus-charcoal);
+}
+
+.nexus-heading-4 {
+  font-family: var(--nexus-font-sans);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--nexus-charcoal);
+}
+
+.nexus-body {
+  font-family: var(--nexus-font-sans);
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.625;
+  color: var(--nexus-gray-600);
+}
+
+.nexus-body-large {
+  font-family: var(--nexus-font-sans);
+  font-size: 1.125rem;
+  font-weight: 400;
+  line-height: 1.625;
+  color: var(--nexus-gray-600);
+}
+
+.nexus-caption {
+  font-family: var(--nexus-font-sans);
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--nexus-gray-500);
+}
+
+/* Layout */
+.nexus-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.nexus-section {
+  padding: 4rem 0;
+}
+
+/* Animations */
+@keyframes nexusFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes nexusSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.nexus-animate-fade-in {
+  animation: nexusFadeIn 0.6s ease-out;
+}
+
+.nexus-animate-slide-up {
+  animation: nexusSlideUp 0.8s ease-out;
+}
+
+@media (max-width: 768px) {
+  .nexus-container {
+    padding: 0 1rem;
+  }
+  
+  .nexus-heading-1 {
+    font-size: 2.25rem;
+  }
+  
+  .nexus-heading-2 {
+    font-size: 1.875rem;
+  }
+  
+  .nexus-section {
+    padding: 2.5rem 0;
+  }
+}

@@ -2,13 +2,13 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { InvestigationProvider } from './contexts/InvestigationContext'
-import EnterpriseLandingPage from './components/enterprise/EnterpriseLandingPage'
-import { EnterpriseLoginForm, EnterpriseSignupForm } from './components/enterprise/EnterpriseAuth'
-import EnterpriseDashboard from './components/enterprise/EnterpriseDashboard'
+import NexusLandingPage from './components/nexus/NexusLandingPage'
+import { NexusLoginForm, NexusSignupForm } from './components/nexus/NexusAuth'
+import NexusDashboard from './components/nexus/NexusDashboard'
 import Investigations from './pages/Investigations'
 import InvestigationDetails from './pages/InvestigationDetails'
 import InvestigationForm from './components/investigations/InvestigationForm'
-import EnterpriseLayout from './components/enterprise/EnterpriseLayout'
+import NexusLayout from './components/nexus/NexusLayout'
 import './index.css'
 
 // Protected Route Component
@@ -17,14 +17,14 @@ const ProtectedRoute = ({ children }) => {
   
   if (loading) {
     return (
-      <EnterpriseLayout>
+      <NexusLayout showFooter={false}>
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Loading...</p>
           </div>
         </div>
-      </EnterpriseLayout>
+      </NexusLayout>
     )
   }
   
@@ -41,7 +41,7 @@ const PublicRoute = ({ children }) => {
     
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
         <div className="text-center">
           <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Loading...</p>
@@ -69,9 +69,9 @@ function App() {
                 path="/" 
                 element={
                   <PublicRoute>
-                    <EnterpriseLayout>
-                      <EnterpriseLandingPage />
-                    </EnterpriseLayout>
+                    <NexusLayout>
+                      <NexusLandingPage />
+                    </NexusLayout>
                   </PublicRoute>
                 } 
               />
@@ -79,7 +79,7 @@ function App() {
                 path="/login" 
                 element={
                   <PublicRoute>
-                    <EnterpriseLoginForm />
+                    <NexusLoginForm />
                   </PublicRoute>
                 } 
               />
@@ -87,7 +87,7 @@ function App() {
                 path="/signup" 
                 element={
                   <PublicRoute>
-                    <EnterpriseSignupForm />
+                    <NexusSignupForm />
                   </PublicRoute>
                 } 
               />
@@ -97,9 +97,9 @@ function App() {
                 path="/dashboard" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
-                      <EnterpriseDashboard />
-                    </EnterpriseLayout>
+                    <NexusLayout>
+                      <NexusDashboard />
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -107,9 +107,9 @@ function App() {
                 path="/investigations" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
+                    <NexusLayout>
                       <Investigations />
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -117,9 +117,9 @@ function App() {
                 path="/investigations/new" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
+                    <NexusLayout>
                       <InvestigationForm />
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -127,35 +127,36 @@ function App() {
                 path="/investigations/:id" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
+                    <NexusLayout>
                       <InvestigationDetails />
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
               
-              {/* Placeholder routes for future enterprise features */}
+              {/* Placeholder routes for future features */}
               <Route 
                 path="/reports" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
-                      <div className="container-enterprise py-16">
+                    <NexusLayout>
+                      <div className="container-nexus section-nexus">
                         <div className="text-center">
-                          <h1 className="text-3xl font-bold text-gray-900 mb-4">Enterprise Reports</h1>
-                          <p className="text-gray-600 mb-6">Advanced reporting and analytics dashboard coming soon.</p>
-                          <div className="bg-blue-50 border border-blue-200 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 className="text-lg font-semibold text-blue-900 mb-2">What's Coming</h3>
-                            <ul className="text-sm text-blue-800 space-y-1 text-left">
+                          <h1 className="nexus-heading-2 mb-4">Intelligence Reports</h1>
+                          <p className="nexus-body-large text-gray-600 mb-6">Advanced reporting and analytics dashboard coming soon.</p>
+                          <div className="card-nexus p-8 max-w-md mx-auto">
+                            <h3 className="text-lg font-semibold text-blue-900 mb-4">What's Coming</h3>
+                            <ul className="text-sm text-blue-800 space-y-2 text-left">
                               <li>• Executive summary reports</li>
-                              <li>• Compliance documentation</li>
+                              <li>• Threat intelligence briefings</li>
                               <li>• Custom report builder</li>
                               <li>• Automated report scheduling</li>
+                              <li>• Compliance documentation</li>
                             </ul>
                           </div>
                         </div>
                       </div>
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -163,23 +164,24 @@ function App() {
                 path="/analytics" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
-                      <div className="container-enterprise py-16">
+                    <NexusLayout>
+                      <div className="container-nexus section-nexus">
                         <div className="text-center">
-                          <h1 className="text-3xl font-bold text-gray-900 mb-4">Security Analytics</h1>
-                          <p className="text-gray-600 mb-6">Advanced security analytics and threat intelligence platform.</p>
-                          <div className="bg-green-50 border border-green-200 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 className="text-lg font-semibold text-green-900 mb-2">Enterprise Features</h3>
-                            <ul className="text-sm text-green-800 space-y-1 text-left">
+                          <h1 className="nexus-heading-2 mb-4">Security Analytics</h1>
+                          <p className="nexus-body-large text-gray-600 mb-6">Advanced security analytics and threat intelligence platform.</p>
+                          <div className="card-nexus p-8 max-w-md mx-auto">
+                            <h3 className="text-lg font-semibold text-green-900 mb-4">AI-Powered Features</h3>
+                            <ul className="text-sm text-green-800 space-y-2 text-left">
                               <li>• Real-time threat monitoring</li>
-                              <li>• Predictive fraud modeling</li>
+                              <li>• Predictive threat modeling</li>
                               <li>• Custom risk scoring</li>
                               <li>• Industry benchmarking</li>
+                              <li>• Behavioral analytics</li>
                             </ul>
                           </div>
                         </div>
                       </div>
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
@@ -187,23 +189,24 @@ function App() {
                 path="/profile" 
                 element={
                   <ProtectedRoute>
-                    <EnterpriseLayout>
-                      <div className="container-enterprise py-16">
+                    <NexusLayout>
+                      <div className="container-nexus section-nexus">
                         <div className="text-center">
-                          <h1 className="text-3xl font-bold text-gray-900 mb-4">Enterprise Settings</h1>
-                          <p className="text-gray-600 mb-6">Manage your enterprise account settings and preferences.</p>
-                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-6 max-w-md mx-auto">
-                            <h3 className="text-lg font-semibold text-purple-900 mb-2">Account Management</h3>
-                            <ul className="text-sm text-purple-800 space-y-1 text-left">
-                              <li>• User management & roles</li>
-                              <li>• SSO configuration</li>
+                          <h1 className="nexus-heading-2 mb-4">Account Settings</h1>
+                          <p className="nexus-body-large text-gray-600 mb-6">Manage your Nexus Guard account settings and preferences.</p>
+                          <div className="card-nexus p-8 max-w-md mx-auto">
+                            <h3 className="text-lg font-semibold text-purple-900 mb-4">Account Management</h3>
+                            <ul className="text-sm text-purple-800 space-y-2 text-left">
+                              <li>• Profile and preferences</li>
+                              <li>• Security settings</li>
                               <li>• API key management</li>
-                              <li>• Compliance settings</li>
+                              <li>• Notification preferences</li>
+                              <li>• Team management</li>
                             </ul>
                           </div>
                         </div>
                       </div>
-                    </EnterpriseLayout>
+                    </NexusLayout>
                   </ProtectedRoute>
                 } 
               />
